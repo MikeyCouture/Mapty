@@ -27,10 +27,23 @@ if (navigator.geolocation) {
         subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
       }).addTo(map);
 
-      L.marker(coords)
-        .addTo(map)
-        .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-        .openPopup();
+      map.on('click', function(mapEvent) {
+        const { lat, lng } = mapEvent.latlng;
+        console.log(lat, lng);
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(
+            L.popup({
+              maxWidth: 250,
+              minWidth: 100,
+              autoClose: false,
+              closeOnClick: false,
+              className: 'running-popup'
+            })
+          )
+          .setPopupContent('Workout')
+          .openPopup();
+      });
     },
     function() {
       alert('Could not get your position');
