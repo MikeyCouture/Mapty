@@ -58,10 +58,6 @@ class Cycling extends Workout {
   }
 }
 
-// const run1 = new Running([39, -12], 5.2, 24, 178);
-// const cycle1 = new Cycling([39, -12], 27, 95, 523);
-// console.log(run1, cycle1);
-
 ///////////////////////////////////////////////////
 //APPLICATION ARCHITECTURE
 const form = document.querySelector('.form');
@@ -79,7 +75,13 @@ class App {
   #workouts = [];
 
   constructor() {
+    //get users position
     this._getPosition();
+
+    //get data from local storage
+    this._getLocalStorage();
+
+    //Attached event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
@@ -110,6 +112,10 @@ class App {
 
     //handling clicks on map
     this.#map.on('click', this._showForm.bind(this));
+
+    this.#workouts.forEach(work => {
+      this._renderWorkoutMaker(work);
+    });
   }
 
   _showForm(mapE) {
@@ -185,6 +191,9 @@ class App {
 
     //Hide form + clear input fields
     this._hideForm();
+
+    //Set Local Stage to all workouts
+    this._setLocalStoage();
   }
 
   _renderWorkoutMaker(workout) {
@@ -274,6 +283,23 @@ class App {
     });
     // using the public interface
     workout.click();
+  }
+
+  _setLocalStoage() {
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+  }
+
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts'));
+    console.log(data);
+
+    if (!data) return;
+
+    this.#workouts = data;
+
+    this.#workouts.forEach(work => {
+      this._renderWorkout(work);
+    });
   }
 }
 
